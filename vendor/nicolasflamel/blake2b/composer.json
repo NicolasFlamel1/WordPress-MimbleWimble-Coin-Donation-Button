@@ -1,0 +1,22 @@
+{
+	"name": "nicolasflamel/blake2b",
+	"description": "PHP library for parts of the official BLAKE2b implementation",
+	"keywords": [
+		"BLAKE2b"
+	],
+	"type": "library",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Nicolasflamel\\Blake2b\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Nicolas Flamel"
+		}
+	],
+	"require": {
+		"php": ">=8.0.0"
+	}
+}

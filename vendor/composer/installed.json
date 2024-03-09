@@ -1,0 +1,96 @@
+{
+    "packages": [
+        {
+            "name": "nicolasflamel/blake2b",
+            "version": "v0.1.0",
+            "version_normalized": "0.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NicolasFlamel1/BLAKE2b-PHP-Library.git",
+                "reference": "799ff728990f13d3c69b215b911b9415e3def1ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NicolasFlamel1/BLAKE2b-PHP-Library/zipball/799ff728990f13d3c69b215b911b9415e3def1ff",
+                "reference": "799ff728990f13d3c69b215b911b9415e3def1ff",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "time": "2024-03-07T21:50:31+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Nicolasflamel\\Blake2b\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Flamel"
+                }
+            ],
+            "description": "PHP library for parts of the official BLAKE2b implementation",
+            "keywords": [
+                "BLAKE2b"
+            ],
+            "support": {
+                "issues": "https://github.com/NicolasFlamel1/BLAKE2b-PHP-Library/issues",
+                "source": "https://github.com/NicolasFlamel1/BLAKE2b-PHP-Library/tree/v0.1.0"
+            },
+            "install-path": "../nicolasflamel/blake2b"
+        },
+        {
+            "name": "nicolasflamel/secp256k1-zkp",
+            "version": "v0.1.0",
+            "version_normalized": "0.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library.git",
+                "reference": "d2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NicolasFlamel1/Secp256k1-zkp-PHP-Library/zipball/d2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421",
+                "reference": "d2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "time": "2024-03-08T11:35:48+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Nicolasflamel\\Secp256k1Zkp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Flamel"
+                }
+            ],
+            "description": "PHP library for parts of libsecp256k1-zkp",
+            "keywords": [
+                "secp256k1-zkp"
+            ],
+            "support": {
+                "issues": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/issues",
+                "source": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/tree/v0.1.0"
+            },
+            "install-path": "../nicolasflamel/secp256k1-zkp"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

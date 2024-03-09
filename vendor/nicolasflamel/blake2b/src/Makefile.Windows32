@@ -1,0 +1,28 @@
+# Program parameters
+NAME = "blake2b"
+VERSION = "0.0.1"
+CC = "i686-w64-mingw32-g++"
+STRIP = "i686-w64-mingw32-strip"
+CFLAGS = -I "./blake2/include" -shared -fPIC -fvisibility=hidden -static-libstdc++ -static-libgcc -O3 -Wall -Wextra -Wno-attributes -std=c++2a -finput-charset=UTF-8 -fexec-charset=UTF-8 -funsigned-char -ffunction-sections -fdata-sections
+LIBS = 
+SRCS = "./blake2/include/blake2b-ref.c" "./blake2b.cpp"
+PROGRAM_NAME = $(subst $\",,$(NAME))-windows-32.dll
+
+# Make
+all:
+	$(CC) $(CFLAGS) -o "./$(PROGRAM_NAME)" $(SRCS) $(LIBS)
+	$(STRIP) "./$(PROGRAM_NAME)"
+
+# Make clean
+clean:
+	rm -rf "./$(PROGRAM_NAME)" "./master.zip" "./BLAKE2-master" "./blake2"
+
+# Make dependencies
+dependencies:
+	
+	# BLAKE2
+	wget "https://github.com/BLAKE2/BLAKE2/archive/master.zip"
+	unzip "./master.zip"
+	rm "./master.zip"
+	mv "./BLAKE2-master" "./blake2"
+	mv "./blake2/ref" "./blake2/include"

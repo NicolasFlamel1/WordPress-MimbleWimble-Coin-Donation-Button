@@ -1,0 +1,6 @@
+{
+    "require": {
+        "nicolasflamel/secp256k1-zkp": "^0.1.0",
+        "nicolasflamel/blake2b": "^0.1.0"
+    }
+}

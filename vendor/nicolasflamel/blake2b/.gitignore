@@ -1,0 +1,6 @@
+example/composer.phar
+example/vendor
+example/composer.lock
+src/master.zip
+src/BLAKE2-master
+src/blake2

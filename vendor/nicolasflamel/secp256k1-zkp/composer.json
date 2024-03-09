@@ -1,0 +1,22 @@
+{
+	"name": "nicolasflamel/secp256k1-zkp",
+	"description": "PHP library for parts of libsecp256k1-zkp",
+	"keywords": [
+		"secp256k1-zkp"
+	],
+	"type": "library",
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"Nicolasflamel\\Secp256k1Zkp\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Nicolas Flamel"
+		}
+	],
+	"require": {
+		"php": ">=8.0.0"
+	}
+}

@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => '__root__',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => null,
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => null,
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'nicolasflamel/blake2b' => array(
+            'pretty_version' => 'v0.1.0',
+            'version' => '0.1.0.0',
+            'reference' => '799ff728990f13d3c69b215b911b9415e3def1ff',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nicolasflamel/blake2b',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'nicolasflamel/secp256k1-zkp' => array(
+            'pretty_version' => 'v0.1.0',
+            'version' => '0.1.0.0',
+            'reference' => 'd2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../nicolasflamel/secp256k1-zkp',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);
