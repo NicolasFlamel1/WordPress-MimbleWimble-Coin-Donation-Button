@@ -97,8 +97,19 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			// Catch errors
 			catch(\Throwable $error) {
 			
-				// Throw error
-				throw new \Exception("MimbleWimble Coin Donation Button isn't compatible");
+				// Check if FFI isn't enabled
+				if(ini_get("ffi.enable") !== "1") {
+				
+					// Throw error
+					throw new \Exception("FFI isn't enabled");
+				}
+				
+				// Otherwise
+				else {
+				
+					// Throw error
+					throw new \Exception("MimbleWimble Coin Donation Button isn't compatible");
+				}
 			}
 		}
 		
@@ -392,7 +403,7 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 										global $wp_locale;
 										
 										// Send email to admin
-										wp_mail(get_site_option("admin_email"), __("MimbleWimble Coin Donation Received", "mimblewimble-coin-donation-button"), sprintf(__("You received a donation of %s MWC. You shouldn't consider this donation to be legitimate until it's been confirmed on the blockchain.", "mimblewimble-coin-donation-button"), preg_replace('/(?=\d{' . self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS . '}$)/u', (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".", str_pad($slateResponse["amount"], self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS + 1, "0", STR_PAD_LEFT), 1)));
+										wp_mail(get_site_option("admin_email"), __("MimbleWimble Coin Donation Received", "mimblewimble-coin-donation-button"), sprintf(__("You received a donation of %s MWC. You shouldn't consider this donation to be legitimate until it's been confirmed on the blockchain.", "mimblewimble-coin-donation-button"), rtrim(rtrim(preg_replace('/(?=\d{' . self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS . '}$)/u', (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".", str_pad($slateResponse["amount"], self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS + 1, "0", STR_PAD_LEFT), 1), "0"), (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".")));
 									}
 								}
 							}
