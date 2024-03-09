@@ -3,7 +3,7 @@
  * Plugin Name: MimbleWimble Coin Donation Button
  * Plugin URI: https://github.com/NicolasFlamel1/WordPress-MimbleWimble-Coin-Donation-Button
  * Description: Plugin for WordPress that adds a MimbleWimble Coin donation button to WordPress's block editor blocks that's capable of accepting MimbleWimble Coin donations without having to run any wallet software.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Requires at least: 6.4
  * Requires PHP: 8.0
  * Author: Nicolas Flamel
@@ -52,6 +52,9 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 		
 		// API route namespace
 		private const API_ROUTE_NAMESPACE = "donate-mimblewimble-coin/v2";
+		
+		// MimbleWimble Coin number of decimal digits
+		private const MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS = 9;
 		
 		// Constructor
 		public function __construct() {
@@ -389,7 +392,7 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 										global $wp_locale;
 										
 										// Send email to admin
-										wp_mail(get_site_option("admin_email"), __("MimbleWimble Coin Donation Received", "mimblewimble-coin-donation-button"), sprintf(__("You received a donation of %s MWC. You shouldn't consider this donation to be legitimate until it's been confirmed on the blockchain.", "mimblewimble-coin-donation-button"), (isset($wp_locale) === TRUE) ? preg_replace('/\./u', $wp_locale->number_format["decimal_point"], $slateResponse["amount"], 1) : $slateResponse["amount"]));
+										wp_mail(get_site_option("admin_email"), __("MimbleWimble Coin Donation Received", "mimblewimble-coin-donation-button"), sprintf(__("You received a donation of %s MWC. You shouldn't consider this donation to be legitimate until it's been confirmed on the blockchain.", "mimblewimble-coin-donation-button"), preg_replace('/(?=\d{' . self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS . '}$)/u', (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".", str_pad($slateResponse["amount"], self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS + 1, "0", STR_PAD_LEFT), 1)));
 									}
 								}
 							}

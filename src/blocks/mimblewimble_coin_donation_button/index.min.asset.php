@@ -19,7 +19,7 @@ return [
 	"dependencies" => ["wp-block-editor", "wp-blocks", "wp-element", "wp-i18n", "MimbleWimbleCoinDonationButton_blocks_script"],
 	
 	// Version
-	"version" => "0.1.0"
+	"version" => "0.1.1"
 ];
 
 
