@@ -16,7 +16,7 @@ if(defined("ABSPATH") === FALSE) {
 return [
 
 	// Dependencies
-	"dependencies" => ["wp-block-editor", "wp-blocks", "wp-element", "wp-i18n", "MimbleWimbleCoinDonationButton_blocks_script"],
+	"dependencies" => ["wp-block-editor", "wp-blocks", "wp-components", "wp-element", "wp-i18n", "MimbleWimbleCoinDonationButton_blocks_script", "MimbleWimbleCoinDonationButton_qrcode-generator_script"],
 	
 	// Version
 	"version" => "0.1.1"

@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => 'af40b4fc776e792014ffd4f9e38b0984b81b97cc',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'af40b4fc776e792014ffd4f9e38b0984b81b97cc',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -29,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'nicolasflamel/secp256k1-zkp' => array(
-            'pretty_version' => 'v0.1.0',
-            'version' => '0.1.0.0',
-            'reference' => 'd2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421',
+            'pretty_version' => 'v0.1.1',
+            'version' => '0.1.1.0',
+            'reference' => '90611a6229bd77cf950635c30fd7b75d0f1ab3b3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../nicolasflamel/secp256k1-zkp',
             'aliases' => array(),

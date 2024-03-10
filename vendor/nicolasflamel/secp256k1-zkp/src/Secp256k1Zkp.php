@@ -413,6 +413,35 @@ final class Secp256k1Zkp {
 		// Return signature
 		return $signature->getString();
 	}
+	
+	// Public key to commitment
+	public function publicKeyToCommitment(string $publicKey): string | FALSE {
+	
+		// Check if public key is invalid
+		if(strlen($publicKey) !== $this->library->PUBLIC_KEY_SIZE) {
+		
+			// Return false
+			return FALSE;
+		}
+		
+		// Check if allocating memory for commitment failed
+		$commitment = new SecureMemory($this->library, $this->library->COMMITMENT_SIZE);
+		if($commitment->getMemory() === NULL) {
+		
+			// Return false
+			return FALSE;
+		}
+		
+		// Check if converting public key to commitment failed
+		if($this->library->publicKeyToCommitment($commitment->getMemory(), $publicKey) !== TRUE) {
+		
+			// Return false
+			return FALSE;
+		}
+		
+		// Return commitment
+		return $commitment->getString();
+	}
 }
 
 

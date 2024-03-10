@@ -18,7 +18,7 @@
 					"text": "var(--wp--preset--color--contrast)"
 				},
 				"typography": {
-					"fontSize": "0.8rem",
+					"fontSize": "1rem",
 					"lineHeight": "1.6",
 					"fontFamily": "inherit",
 					"fontWeight": "normal",
@@ -28,6 +28,10 @@
 					"letterSpacing": "1.5px"
 				}
 			}
+		},
+		"invertQrCodeColor": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

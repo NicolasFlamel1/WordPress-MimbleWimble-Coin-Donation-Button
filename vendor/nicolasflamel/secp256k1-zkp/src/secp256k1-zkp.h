@@ -65,5 +65,8 @@ extern "C" __attribute__((dllexport, visibility("default"))) bool combinePublicK
 // Get partial single-signer signature
 extern "C" __attribute__((dllexport, visibility("default"))) bool getPartialSingleSignerSignature(uint8_t *serializedSignature, const char *privateKey, const char *message, const char *privateNonce, const char *serializedPublicKey, const char *serializedPublicNonce);
 
+// Public key to commitment
+extern "C" __attribute__((dllexport, visibility("default"))) bool publicKeyToCommitment(uint8_t * serializedCommitment, const char *serializedPublicKey);
+
 
 #endif

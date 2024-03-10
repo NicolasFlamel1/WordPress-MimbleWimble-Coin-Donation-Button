@@ -41,4 +41,33 @@ jQuery(($) => {
 			}, 0);
 		}
 	});
+	
+	// Try
+	try {
+	
+		// Initialize QR code
+		qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+		const qrCode = qrcode(0, "L");
+		
+		// Add donation address to QR code
+		qrCode.addData(MimbleWimbleCoinDonationButton_blocks_script_parameters.donation_address, "Byte");
+		
+		// Create QR code
+		qrCode.make();
+		
+		// Get QR code's data URL
+		const dataUrl = qrCode.createDataURL(0, 0);
+		
+		// Go through all MimbleWimble Coin donation button QR code images
+		$("div.wp-block-mimblewimble-coin-donation-button-mimblewimble-coin-donation-button img:last-of-type").each(function() {
+		
+			// Set QR code image's source to the data URL and show it
+			$(this).attr("src", dataUrl).removeClass("mimblewimble-coin-donation-button-mimblewimble-coin-donation-button_hide");
+		});
+	}
+	
+	// Catch errors
+	catch(error) {
+	
+	}
 });

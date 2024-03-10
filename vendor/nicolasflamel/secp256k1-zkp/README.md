@@ -53,6 +53,9 @@ $combinedPublicKey = $secp256k1Zkp->combinePublicKeys([hex2bin("03e7e3dd547cc317
 // Get partial single-signer signature
 $partialSingleSignerSignature = $secp256k1Zkp->getPartialSingleSignerSignature(hex2bin("8c3882fbd7966085e760e000b1ea9eb1ad3df1eec02e720adaa5104c6bd9fd88"), hex2bin("10f3f976ecfd891b95ac8dddec7ca41685f5e5b034facba4a3ef8c3d319fea54"), hex2bin("e770cbe631b86e65417355157d4696c0a9eff485a8f0a0b005a4e86e5e31f9c9"), hex2bin("02500d2963a767c6be0121b2ca0350f54b37473be066a2d30dbbc4065d5b1fee41"), hex2bin("03fdfbccfaecc71ce664b2e03b8fb535ef8497ea743a0d2644cfb267524b6c7cee"));
 
+// Convert public key to commitment
+$commitment = $secp256k1Zkp->publicKeyToCommitment(hex2bin("02883a3f816419d4ce5bf44e320c24c5b09b0621c70fb780d7a35c86570bd35475"));
+
 ?>
 ```
 
@@ -136,7 +139,7 @@ $partialSingleSignerSignature = $secp256k1Zkp->getPartialSingleSignerSignature(h
    * `string`: The combined public key.
    * `FALSE`: Combing public keys failed.
 
-1. Secp256k1-zkp get partial single-signer signature method: `getPartialSingleSignerSignature(string $privateKey, string $message, string $privateNonce, string $publicKey, string $publicNonce): string | FALSE`
+0. Secp256k1-zkp get partial single-signer signature method: `getPartialSingleSignerSignature(string $privateKey, string $message, string $privateNonce, string $publicKey, string $publicNonce): string | FALSE`
 
    This method is used to get the partial single-signer signature for a provided message signed with a provided private key using a provided private nonce, public key, and public nonce and it accepts the following parameters:
    * `string $privateKey`: The private key to use.
@@ -148,3 +151,12 @@ $partialSingleSignerSignature = $secp256k1Zkp->getPartialSingleSignerSignature(h
    This method returns the following values:
    * `string`: The partial single-signer signature for the provided message signed with the provided private key using the provided private nonce, public key, and public nonce.
    * `FALSE`: Getting the partial single-signer signature failed.
+
+1. Secp256k1-zkp public key to commitment method: `publicKeyToCommitment(string $publicKey): string | FALSE`
+
+   This method is used to convert a provided public key to a commitment and it accepts the following parameters:
+   * `string $publicKey`: The public key to convert to a commitment.
+
+   This method returns the following values:
+   * `string`: The commitment.
+   * `FALSE`: Converting the public key failed.

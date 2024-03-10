@@ -47,23 +47,23 @@
         },
         {
             "name": "nicolasflamel/secp256k1-zkp",
-            "version": "v0.1.0",
-            "version_normalized": "0.1.0.0",
+            "version": "v0.1.1",
+            "version_normalized": "0.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library.git",
-                "reference": "d2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421"
+                "reference": "90611a6229bd77cf950635c30fd7b75d0f1ab3b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NicolasFlamel1/Secp256k1-zkp-PHP-Library/zipball/d2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421",
-                "reference": "d2095a5cc4c0a65c3d0473bcdac9a2b84dbd4421",
+                "url": "https://api.github.com/repos/NicolasFlamel1/Secp256k1-zkp-PHP-Library/zipball/90611a6229bd77cf950635c30fd7b75d0f1ab3b3",
+                "reference": "90611a6229bd77cf950635c30fd7b75d0f1ab3b3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0.0"
             },
-            "time": "2024-03-08T11:35:48+00:00",
+            "time": "2024-03-09T16:48:41+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -86,7 +86,7 @@
             ],
             "support": {
                 "issues": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/issues",
-                "source": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/tree/v0.1.0"
+                "source": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/tree/v0.1.1"
             },
             "install-path": "../nicolasflamel/secp256k1-zkp"
         }

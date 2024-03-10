@@ -392,6 +392,39 @@ bool getPartialSingleSignerSignature(uint8_t *serializedSignature, const char *p
 	return true;
 }
 
+// Public key to commitment
+bool publicKeyToCommitment(uint8_t * serializedCommitment, const char *serializedPublicKey) {
+
+	// Check if parsing serialized public key failed
+	secp256k1_pubkey publicKey;
+	if(!secp256k1_ec_pubkey_parse(secp256k1_context_no_precomp, &publicKey, reinterpret_cast<const uint8_t *>(serializedPublicKey), PUBLIC_KEY_SIZE)) {
+	
+		// Return false
+		return false;
+	}
+	
+	// Check if getting commitment from public key failed
+	secp256k1_pedersen_commitment commitment;
+	if(!secp256k1_pubkey_to_pedersen_commitment(secp256k1_context_no_precomp, &commitment, &publicKey)) {
+	
+		// Return false
+		return false;
+	}
+	
+	// Check if serializing commitment failed
+	if(!secp256k1_pedersen_commitment_serialize(secp256k1_context_no_precomp, serializedCommitment, &commitment)) {
+	
+		// Securely clear serialized commitment
+		securelyClear(serializedCommitment, COMMITMENT_SIZE);
+		
+		// Return false
+		return false;
+	}
+	
+	// Return true
+	return true;
+}
+
 // Create context
 secp256k1_context *createContext() {
 

@@ -367,8 +367,23 @@ if(class_exists("Wallet") === FALSE) {
 				"message_sig" => NULL
 			];
 			
-			// Return slate
-			return $slate;
+			// Check if getting excess failed
+			$excess = $this->secp256k1Zkp->publicKeyToCommitment($publicBlindExcessSum);
+			if($excess === FALSE) {
+			
+				// Return false
+				return FALSE;
+			}
+			
+			// Return
+			return [
+			
+				// Slate
+				$slate,
+				
+				// Excess
+				$excess
+			];
 		}
 		
 		// Get commitment

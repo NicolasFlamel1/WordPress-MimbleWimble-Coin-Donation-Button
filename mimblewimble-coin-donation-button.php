@@ -38,6 +38,9 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 		// Blocks category ID
 		private const BLOCKS_CATEGORY_ID = "mimblewimble-coin-donation-button";
 		
+		// Wallet created option name
+		private const WALLET_CREATED_OPTION_NAME = "mimblewimble_coin_donation_button_wallet_created";
+		
 		// Recovery passphrase displayed option name
 		private const RECOVERY_PASSPHRASE_DISPLAYED_OPTION_NAME = "mimblewimble_coin_donation_button_recovery_passphrase_displayed";
 		
@@ -50,11 +53,20 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 		// Display recovery passphrase query name
 		private const DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME = "mimblewimble_coin_donation_button_display_recovery_passphrase";
 		
+		// Display address query name
+		private const DISPLAY_ADDRESS_QUERY_NAME = "mimblewimble_coin_donation_button_display_address";
+		
 		// API route namespace
-		private const API_ROUTE_NAMESPACE = "donate-mimblewimble-coin/v2";
+		private const API_ROUTE_NAMESPACE = "donate-mimblewimble-coin";
+		
+		// API route version
+		private const API_ROUTE_VERSION = 2;
 		
 		// MimbleWimble Coin number of decimal digits
 		private const MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS = 9;
+		
+		// MimbleWimble Coin block explorer URL
+		private const MIMBLEWIMBLE_COIN_BLOCK_EXPLORER_URL = "https://explorer.mwc.mw/#k";
 		
 		// Constructor
 		public function __construct() {
@@ -68,20 +80,34 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			// Delete seed
 			register_uninstall_hook(__FILE__, __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::deleteSeed");
 			
-			// Add translations and blocks
-			add_action("init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addTranslationsAndBlocks");
+			// Check if FFI is enabled
+			if(ini_get("ffi.enable") === "1") {
 			
-			// Display recovery passphrase
-			add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displayRecoveryPassphrase");
+				// Create wallet
+				add_action("plugins_loaded", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::createWallet");
+				
+				// Add translations and blocks
+				add_action("init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addTranslationsAndBlocks");
+				
+				// Display recovery passphrase and address
+				add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displayRecoveryPassphraseAndAddress");
+				
+				// Add display recovery passphrase and address links
+				add_filter("plugin_action_links_" . plugin_basename(__FILE__), __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addDisplayRecoveryPassphraseAndAddressLinks");
+				
+				// Add scripts
+				add_action("wp_enqueue_scripts", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addScripts");
+				
+				// Register API
+				add_action("rest_api_init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::registerApi");
+			}
 			
-			// Add display recovery passphrase link
-			add_filter("plugin_action_links_" . plugin_basename(__FILE__), __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addDisplayRecoveryPassphraseLink");
+			// Otherwise
+			else {
 			
-			// Add scripts
-			add_action("wp_enqueue_scripts", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addScripts");
-			
-			// Register API
-			add_action("rest_api_init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::registerApi");
+				// Display FFI requirement
+				add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displayFfiRequirement");
+			}
 		}
 		
 		// Check if compatible
@@ -97,25 +123,38 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			// Catch errors
 			catch(\Throwable $error) {
 			
-				// Check if FFI isn't enabled
-				if(ini_get("ffi.enable") !== "1") {
-				
-					// Throw error
-					throw new \Exception("FFI isn't enabled");
-				}
-				
-				// Otherwise
-				else {
+				// Check if FFI is enabled
+				if(ini_get("ffi.enable") === "1") {
 				
 					// Throw error
 					throw new \Exception("MimbleWimble Coin Donation Button isn't compatible");
 				}
+				
+				// Otherwise check if setting that wallet wasn't created failed
+				else if(get_option(self::WALLET_CREATED_OPTION_NAME) !== "false" && update_option(self::WALLET_CREATED_OPTION_NAME, "false", TRUE) === FALSE) {
+				
+					// Throw error
+					throw new \Exception("Saving that wallet wasn't created failed");
+				}
+				
+				// Return
+				return;
+			}
+			
+			// Check if setting that wallet was created failed
+			if(get_option(self::WALLET_CREATED_OPTION_NAME) !== "true" && update_option(self::WALLET_CREATED_OPTION_NAME, "true", TRUE) === FALSE) {
+			
+				// Throw error
+				throw new \Exception("Saving that wallet was created failed");
 			}
 		}
 		
 		// Delete seed
 		public static function deleteSeed(): void {
 		
+			// Delete wallet created
+			delete_option(self::WALLET_CREATED_OPTION_NAME);
+			
 			// Delete recovery passphrase displayed
 			delete_option(self::RECOVERY_PASSPHRASE_DISPLAYED_OPTION_NAME);
 			
@@ -124,6 +163,17 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			
 			// Delete identifier path
 			delete_option(self::IDENTIFIER_PATH_OPTION_NAME);
+		}
+		
+		// Create wallet
+		public static function createWallet(): void {
+		
+			// Check if wallet hasn't been created
+			if(get_option(self::WALLET_CREATED_OPTION_NAME) !== "true") {
+			
+				// Check if compatible
+				self::checkIfCompatible();
+			}
 		}
 		
 		// Add translations and blocks
@@ -135,7 +185,8 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			// Add translations
 			load_plugin_textdomain($pluginData["TextDomain"], FALSE, dirname(__FILE__) . $pluginData["DomainPath"]);
 			
-			// Add blocks script
+			// Add blocks scripts
+			wp_enqueue_script("MimbleWimbleCoinDonationButton_qrcode-generator_script", plugins_url("assets/js/qrcode-generator-1.4.4.min.js", __FILE__), [], $pluginData["Version"], TRUE);
 			wp_enqueue_script("MimbleWimbleCoinDonationButton_blocks_script", plugins_url("assets/js/blocks.min.js", __FILE__), ["wp-blocks"], $pluginData["Version"], TRUE);
 			
 			// Load translations for blocks scripts
@@ -151,7 +202,10 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 				"category_title" => __("MimbleWimble Coin Donation Button", "mimblewimble-coin-donation-button"),
 				
 				// Blocks path
-				"blocks_path" => plugins_url("src/blocks/", __FILE__)
+				"blocks_path" => plugins_url("src/blocks/", __FILE__),
+				
+				// Donation address
+				"donation_address" => get_rest_url(NULL, self::API_ROUTE_NAMESPACE)
 				
 			]), "before");
 			
@@ -159,14 +213,14 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			register_block_type(plugin_dir_path(__FILE__) . "src/blocks/mimblewimble_coin_donation_button");
 		}
 		
-		// Display recovery passphrase
-		public static function displayRecoveryPassphrase(): void {
+		// Display recovery passphrase and address
+		public static function displayRecoveryPassphraseAndAddress(): void {
 		
 			// Check if user requested to display recovery passphrase or recovery passphrase hasn't been displayed
-			if((isset($_GET) === TRUE && array_key_exists(self::DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME, $_GET) === TRUE) || get_option(self::RECOVERY_PASSPHRASE_DISPLAYED_OPTION_NAME) === FALSE) {
+			if((isset($_GET) === TRUE && array_key_exists(self::DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME, $_GET) === TRUE) || get_option(self::RECOVERY_PASSPHRASE_DISPLAYED_OPTION_NAME) !== "true") {
 				
 				// Check if setting that recovery passphrase was displayed was successful or user requested to display recovery passphrase
-				if(update_option(self::RECOVERY_PASSPHRASE_DISPLAYED_OPTION_NAME, TRUE, FALSE) === TRUE || (isset($_GET) === TRUE && array_key_exists(self::DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME, $_GET) === TRUE)) {
+				if(update_option(self::RECOVERY_PASSPHRASE_DISPLAYED_OPTION_NAME, "true", FALSE) === TRUE || (isset($_GET) === TRUE && array_key_exists(self::DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME, $_GET) === TRUE)) {
 				
 					// Display start of info
 					echo "<div class=\"notice notice-info is-dismissible\"><p>" . esc_html__("Your MimbleWimble Coin donation wallet's recovery passphrase is: ", "mimblewimble-coin-donation-button") . "<strong>";
@@ -178,16 +232,30 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 					echo "</strong></p></div>";
 				}
 			}
+			
+			// Check if user requested to display address
+			if(isset($_GET) === TRUE && array_key_exists(self::DISPLAY_ADDRESS_QUERY_NAME, $_GET) === TRUE) {
+			
+				// Display info
+				echo "<div class=\"notice notice-info is-dismissible\"><p>" . sprintf(esc_html__("Your MimbleWimble Coin donation wallet's address is: %s", "mimblewimble-coin-donation-button"), "<strong><a href=\"" . esc_url(get_rest_url(NULL, self::API_ROUTE_NAMESPACE)) . "\" aria-label=\"" . esc_attr__("Open your MimbleWimble Coin donation wallet's address", "mimblewimble-coin-donation-button") . "\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">" . esc_html(get_rest_url(NULL, self::API_ROUTE_NAMESPACE)) . "</a></strong>") . "</p></div>";
+			}
 		}
 		
-		// Add display recovery passphrase link
-		public static function addDisplayRecoveryPassphraseLink(array $actions): array {
+		// Add display recovery passphrase and address links
+		public static function addDisplayRecoveryPassphraseAndAddressLinks(array $actions): array {
 		
-			// Create display recovery passphrase link
-			$displayRecoveryPassphraseLink = ["display_recovery_passphrase" => "<a href=\"" . esc_url(admin_url("plugins.php?" . self::DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME)) . "\" aria-label=\"" . esc_attr__("Display your MimbleWimble Coin donation wallet's recovery passphrase", "mimblewimble-coin-donation-button") . "\">" . esc_html__("Display recovery passphrase", "mimblewimble-coin-donation-button") . "</a>"];
+			// Create display recovery passphrase and address links
+			$displayRecoveryPassphraseLinks = [
 			
-			// Add display recovery passphrase link to actions and return it
-			return array_merge($displayRecoveryPassphraseLink, $actions);
+				// Display recovery passphrase
+				"display_recovery_passphrase" => "<a href=\"" . esc_url(admin_url("plugins.php?" . self::DISPLAY_RECOVERY_PASSPHRASE_QUERY_NAME)) . "\" aria-label=\"" . esc_attr__("Display your MimbleWimble Coin donation wallet's recovery passphrase", "mimblewimble-coin-donation-button") . "\">" . esc_html__("Display recovery passphrase", "mimblewimble-coin-donation-button") . "</a>",
+				
+				// Display address
+				"display_address" => "<a href=\"" . esc_url(admin_url("plugins.php?" . self::DISPLAY_ADDRESS_QUERY_NAME)) . "\" aria-label=\"" . esc_attr__("Display your MimbleWimble Coin donation wallet's address", "mimblewimble-coin-donation-button") . "\">" . esc_html__("Display address", "mimblewimble-coin-donation-button") . "</a>"
+			];
+			
+			// Add display recovery passphrase and address links to actions and return it
+			return array_merge($displayRecoveryPassphraseLinks, $actions);
 		}
 		
 		// Add scripts
@@ -197,14 +265,14 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			$pluginData = get_plugin_data(__FILE__);
 			
 			// Add scripts
-			wp_enqueue_script("MimbleWimbleCoinDonationButton_links_script", plugins_url("assets/js/links.min.js", __FILE__), ["jquery"], $pluginData["Version"], TRUE);
+			wp_enqueue_script("MimbleWimbleCoinDonationButton_links_script", plugins_url("assets/js/links.min.js", __FILE__), ["jquery", "MimbleWimbleCoinDonationButton_blocks_script", "MimbleWimbleCoinDonationButton_qrcode-generator_script"], $pluginData["Version"], TRUE);
 		}
 		
 		// Register API
 		public static function registerApi(): void {
 		
 			// Register foreign API route
-			register_rest_route(self::API_ROUTE_NAMESPACE, "/foreign", [
+			register_rest_route(self::API_ROUTE_NAMESPACE . "/v" . self::API_ROUTE_VERSION, "/foreign", [
 			
 				// Methods
 				"methods" => \WP_REST_Server::CREATABLE,
@@ -352,8 +420,8 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 							else {
 							
 								// Check if adding wallet's output to request's slate failed
-								$slateResponse = self::getWallet()->addOutputToSlate($identifierPath, $json["params"][0]);
-								if($slateResponse === FALSE) {
+								$result = self::getWallet()->addOutputToSlate($identifierPath, $json["params"][0]);
+								if($result === FALSE) {
 								
 									// Set response to internal error
 									$response = [
@@ -379,6 +447,9 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 								// Otherwise
 								else {
 								
+									// Get slate and excess from the result
+									list($slate, $excess) = $result;
+									
 									// Set response to slate response
 									$response = [
 									
@@ -392,7 +463,7 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 										"result" => [
 										
 											// Ok
-											"Ok" => $slateResponse
+											"Ok" => $slate
 										]
 									];
 									
@@ -403,7 +474,11 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 										global $wp_locale;
 										
 										// Send email to admin
-										wp_mail(get_site_option("admin_email"), __("MimbleWimble Coin Donation Received", "mimblewimble-coin-donation-button"), sprintf(__("You received a donation of %s MWC. You shouldn't consider this donation to be legitimate until it's been confirmed on the blockchain.", "mimblewimble-coin-donation-button"), rtrim(rtrim(preg_replace('/(?=\d{' . self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS . '}$)/u', (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".", str_pad($slateResponse["amount"], self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS + 1, "0", STR_PAD_LEFT), 1), "0"), (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".")));
+										wp_mail(get_site_option("admin_email"), __("MimbleWimble Coin Donation Received", "mimblewimble-coin-donation-button"), sprintf(esc_html__("You received a donation of %s MWC.", "mimblewimble-coin-donation-button"), esc_html(rtrim(rtrim(preg_replace('/(?=\d{' . self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS . '}$)/u', (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : ".", str_pad($slate["amount"], self::MIMBLEWIMBLE_COIN_NUMBER_OF_DECIMAL_DIGITS + 1, "0", STR_PAD_LEFT), 1), "0"), (isset($wp_locale) === TRUE) ? $wp_locale->number_format["decimal_point"] : "."))) . "<br><br>" . sprintf(esc_html__('You shouldn\'t consider this donation to be legitimate until it\'s been confirmed on the blockchain. %1$sView donation in a block explorer%2$s.', "mimblewimble-coin-donation-button"), "<a href=\"" . esc_url(self::MIMBLEWIMBLE_COIN_BLOCK_EXPLORER_URL . bin2hex($excess)) . "\">", "</a>"), [
+										
+											// Content type
+											"Content-Type: text/html; charset=" . get_bloginfo("charset")
+										]);
 									}
 								}
 							}
@@ -442,6 +517,13 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 				// Return ok response
 				return new \WP_REST_Response($response);
 			}
+		}
+		
+		// Display FFI requirement
+		public static function displayFfiRequirement(): void {
+		
+			// Display error
+			echo "<div class=\"notice notice-error is-dismissible\"><p>" . sprintf(esc_html__('MimbleWimble Coin Donation Button won\'t work unless you enable PHP\'s FFI API. Please %1$senable PHP\'s FFI API%2$s to resolve this issue.', "mimblewimble-coin-donation-button"), "<a href=\"" . esc_url("https://www.php.net/manual/ffi.configuration.php#ini.ffi.enable") . "\" aria-label=\"" . esc_attr__("Go to PHP's FFI settings documentation", "mimblewimble-coin-donation-button") . "\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">", "</a>") . "</p></div>";
 		}
 		
 		// Get wallet
