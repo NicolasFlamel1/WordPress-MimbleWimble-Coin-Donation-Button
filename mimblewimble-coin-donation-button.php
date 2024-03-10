@@ -86,25 +86,43 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 				// Create wallet
 				add_action("plugins_loaded", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::createWallet");
 				
-				// Add translations and blocks
-				add_action("init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addTranslationsAndBlocks");
+				// Check if connection is secure
+				if(self::isConnectionSecure() === TRUE) {
+					
+					// Add translations and blocks
+					add_action("init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addTranslationsAndBlocks");
+					
+					// Display recovery passphrase and address
+					add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displayRecoveryPassphraseAndAddress");
+					
+					// Add display recovery passphrase and address links
+					add_filter("plugin_action_links_" . plugin_basename(__FILE__), __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addDisplayRecoveryPassphraseAndAddressLinks");
+					
+					// Add scripts
+					add_action("wp_enqueue_scripts", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addScripts");
+					
+					// Register API
+					add_action("rest_api_init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::registerApi");
+				}
 				
-				// Display recovery passphrase and address
-				add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displayRecoveryPassphraseAndAddress");
+				// Otherwise
+				else {
 				
-				// Add display recovery passphrase and address links
-				add_filter("plugin_action_links_" . plugin_basename(__FILE__), __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addDisplayRecoveryPassphraseAndAddressLinks");
-				
-				// Add scripts
-				add_action("wp_enqueue_scripts", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::addScripts");
-				
-				// Register API
-				add_action("rest_api_init", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::registerApi");
+					// Display secure connection requirement
+					add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displaySecureConnectionRequirement");
+				}
 			}
 			
 			// Otherwise
 			else {
 			
+				// Check if connection isn't secure
+				if(self::isConnectionSecure() === FALSE) {
+				
+					// Display secure connection requirement
+					add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displaySecureConnectionRequirement");
+				}
+				
 				// Display FFI requirement
 				add_action("admin_notices", __NAMESPACE__ . "\MimbleWimbleCoinDonationButton::displayFfiRequirement");
 			}
@@ -519,6 +537,13 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			}
 		}
 		
+		// Display secure connection requirement
+		public static function displaySecureConnectionRequirement(): void {
+		
+			// Display warning
+			echo "<div class=\"notice notice-warning is-dismissible\"><p>" . esc_html__('MimbleWimble Coin Donation Button won\'t work with an insecure connection. Please serve your website over an HTTPS connection to resolve this issue.', "mimblewimble-coin-donation-button") . "</p></div>";
+		}
+		
 		// Display FFI requirement
 		public static function displayFfiRequirement(): void {
 		
@@ -559,6 +584,31 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 			
 			// Return wallet
 			return $wallet;
+		}
+		
+		// Is connection secure
+		private static function isConnectionSecure(): bool {
+		
+			// Check if site is an Onion Service
+			if(preg_match('/\.onion$/ui', get_site_url()) === 1) {
+			
+				// Return true
+				return TRUE;
+			}
+			
+			// Otherwise check if site is behind a proxy or load balancer and client connected to it securely
+			else if(isset($_SERVER) === TRUE && array_key_exists("HTTP_X_FORWARDED_PROTO", $_SERVER) === TRUE && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") {
+			
+				// Return true
+				return TRUE;
+			}
+			
+			// Otherwise
+			else {
+			
+				// Return if connection is secure
+				return is_ssl() === TRUE;
+			}
 		}
 	}
 
