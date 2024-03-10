@@ -554,31 +554,38 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 		// Get wallet
 		private static function getWallet(): Wallet {
 		
-			// Include dependencies
-			require_once plugin_dir_path(__FILE__) . "includes/wallet.php";
+			// Initialize wallet
+			static $wallet = NULL;
 			
-			// Check if getting seed failed
-			$seed = hex2bin(get_option(self::SEED_OPTION_NAME, ""));
-			if($seed === FALSE) {
+			// Check if wallet doesn't exist
+			if($wallet === NULL) {
 			
-				// Set seed to no seed
-				$seed = "";
-			}
-			
-			// Set save seed to if seed doesn't exist
-			$saveSeed = $seed === "";
-			
-			// Create wallet with seed
-			$wallet = new Wallet($seed);
-			
-			// Check if saving seed
-			if($saveSeed === TRUE) {
-			
-				// Check if saving seed failed
-				if(update_option(self::SEED_OPTION_NAME, bin2hex($seed), FALSE) === FALSE) {
+				// Include dependencies
+				require_once plugin_dir_path(__FILE__) . "includes/wallet.php";
 				
-					// Throw error
-					throw new \Exception("Saving seed failed");
+				// Check if getting seed failed
+				$seed = hex2bin(get_option(self::SEED_OPTION_NAME, ""));
+				if($seed === FALSE) {
+				
+					// Set seed to no seed
+					$seed = "";
+				}
+				
+				// Set save seed to if seed doesn't exist
+				$saveSeed = $seed === "";
+				
+				// Create wallet with seed
+				$wallet = new Wallet($seed);
+				
+				// Check if saving seed
+				if($saveSeed === TRUE) {
+				
+					// Check if saving seed failed
+					if(update_option(self::SEED_OPTION_NAME, bin2hex($seed), FALSE) === FALSE) {
+					
+						// Throw error
+						throw new \Exception("Saving seed failed");
+					}
 				}
 			}
 			
