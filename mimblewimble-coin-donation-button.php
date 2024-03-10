@@ -3,7 +3,7 @@
  * Plugin Name: MimbleWimble Coin Donation Button
  * Plugin URI: https://github.com/NicolasFlamel1/WordPress-MimbleWimble-Coin-Donation-Button
  * Description: Plugin for WordPress that adds a MimbleWimble Coin donation button to WordPress's block editor blocks that's capable of accepting MimbleWimble Coin donations without having to run any wallet software.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Requires at least: 6.4
  * Requires PHP: 8.0
  * Author: Nicolas Flamel
@@ -522,8 +522,8 @@ if(class_exists("MimbleWimbleCoinDonationButton") === FALSE) {
 		// Display FFI requirement
 		public static function displayFfiRequirement(): void {
 		
-			// Display error
-			echo "<div class=\"notice notice-error is-dismissible\"><p>" . sprintf(esc_html__('MimbleWimble Coin Donation Button won\'t work unless you enable PHP\'s FFI API. Please %1$senable PHP\'s FFI API%2$s to resolve this issue.', "mimblewimble-coin-donation-button"), "<a href=\"" . esc_url("https://www.php.net/manual/ffi.configuration.php#ini.ffi.enable") . "\" aria-label=\"" . esc_attr__("Go to PHP's FFI settings documentation", "mimblewimble-coin-donation-button") . "\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">", "</a>") . "</p></div>";
+			// Display warning
+			echo "<div class=\"notice notice-warning is-dismissible\"><p>" . sprintf(esc_html__('MimbleWimble Coin Donation Button won\'t work unless you enable PHP\'s FFI API. Please %1$senable PHP\'s FFI API%2$s to resolve this issue.', "mimblewimble-coin-donation-button"), "<a href=\"" . esc_url("https://www.php.net/manual/ffi.configuration.php#ini.ffi.enable") . "\" aria-label=\"" . esc_attr__("Go to PHP's FFI settings documentation", "mimblewimble-coin-donation-button") . "\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">", "</a>") . "</p></div>";
 		}
 		
 		// Get wallet

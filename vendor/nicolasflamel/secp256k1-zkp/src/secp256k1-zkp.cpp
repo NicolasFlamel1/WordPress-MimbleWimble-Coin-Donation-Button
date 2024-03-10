@@ -152,9 +152,10 @@ bool addPrivateKeys(char *firstPrivateKey, const char *secondPrivateKey) {
 // Get blinding factor
 bool getBlindingFactor(uint8_t *blindingFactor, const char *blind, const char *value) {
 	
-	// Check if gett value as as number failed
-	const uint64_t valueAsNumber = strtoull(value, nullptr, 10);
-	if(valueAsNumber == ULLONG_MAX && errno == ERANGE) {
+	// Check if getting value as as number failed or it's too big
+	errno = 0;
+	const unsigned long long valueAsNumber = strtoull(value, nullptr, 10);
+	if((valueAsNumber == ULLONG_MAX && errno == ERANGE) || valueAsNumber > numeric_limits<uint64_t>::max()) {
 	
 		// Return false
 		return false;
@@ -187,9 +188,10 @@ bool getBlindingFactor(uint8_t *blindingFactor, const char *blind, const char *v
 // Get commitment
 bool getCommitment(uint8_t *serializedCommitment, const char *blindingFactor, const char *value) {
 
-	// Check if gett value as as number failed
-	const uint64_t valueAsNumber = strtoull(value, nullptr, 10);
-	if(valueAsNumber == ULLONG_MAX && errno == ERANGE) {
+	// Check if getting value as as number failed or it's too big
+	errno = 0;
+	const unsigned long long valueAsNumber = strtoull(value, nullptr, 10);
+	if((valueAsNumber == ULLONG_MAX && errno == ERANGE) || valueAsNumber > numeric_limits<uint64_t>::max()) {
 	
 		// Return false
 		return false;
@@ -220,9 +222,10 @@ bool getCommitment(uint8_t *serializedCommitment, const char *blindingFactor, co
 // Get Bulletproof
 bool getBulletproof(uint8_t *bulletproof, const char *blindingFactor, const char *value, const char *rewindNonce, const char *privateNonce, const char *message) {
 
-	// Check if gett value as as number failed
-	const uint64_t valueAsNumber = strtoull(value, nullptr, 10);
-	if(valueAsNumber == ULLONG_MAX && errno == ERANGE) {
+	// Check if getting value as as number failed or it's too big
+	errno = 0;
+	const unsigned long long valueAsNumber = strtoull(value, nullptr, 10);
+	if((valueAsNumber == ULLONG_MAX && errno == ERANGE) || valueAsNumber > numeric_limits<uint64_t>::max()) {
 	
 		// Return false
 		return false;
@@ -230,7 +233,8 @@ bool getBulletproof(uint8_t *bulletproof, const char *blindingFactor, const char
 	
 	// Check if creating Bulletproof failed
 	size_t bulletproofLength = BULLETPROOF_SIZE;
-	if(!secp256k1_bulletproof_rangeproof_prove(context.get(), scratchSpace.get(), generators.get(), bulletproof, &bulletproofLength, nullptr, nullptr, nullptr, &valueAsNumber, nullptr, reinterpret_cast<const uint8_t **>(&blindingFactor), nullptr, 1, &secp256k1_generator_const_h, numeric_limits<uint64_t>::digits, reinterpret_cast<const uint8_t *>(rewindNonce), reinterpret_cast<const uint8_t *>(privateNonce), nullptr, 0, reinterpret_cast<const uint8_t *>(message)) || bulletproofLength != BULLETPROOF_SIZE) {
+	const uint64_t temp = valueAsNumber;
+	if(!secp256k1_bulletproof_rangeproof_prove(context.get(), scratchSpace.get(), generators.get(), bulletproof, &bulletproofLength, nullptr, nullptr, nullptr, &temp, nullptr, reinterpret_cast<const uint8_t **>(&blindingFactor), nullptr, 1, &secp256k1_generator_const_h, numeric_limits<uint64_t>::digits, reinterpret_cast<const uint8_t *>(rewindNonce), reinterpret_cast<const uint8_t *>(privateNonce), nullptr, 0, reinterpret_cast<const uint8_t *>(message)) || bulletproofLength != BULLETPROOF_SIZE) {
 	
 		// Securely clear Bulletproof
 		securelyClear(bulletproof, BULLETPROOF_SIZE);

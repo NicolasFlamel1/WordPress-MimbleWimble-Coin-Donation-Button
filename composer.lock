@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db046b5b8f63f40077219d0372fafaff",
+    "content-hash": "4f46402e62ae572f9313a19998570375",
     "packages": [
         {
             "name": "nicolasflamel/blake2b",
@@ -50,16 +50,16 @@
         },
         {
             "name": "nicolasflamel/secp256k1-zkp",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library.git",
-                "reference": "90611a6229bd77cf950635c30fd7b75d0f1ab3b3"
+                "reference": "30ae3c90a6d6caabf4654ad1e6466680d0957100"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NicolasFlamel1/Secp256k1-zkp-PHP-Library/zipball/90611a6229bd77cf950635c30fd7b75d0f1ab3b3",
-                "reference": "90611a6229bd77cf950635c30fd7b75d0f1ab3b3",
+                "url": "https://api.github.com/repos/NicolasFlamel1/Secp256k1-zkp-PHP-Library/zipball/30ae3c90a6d6caabf4654ad1e6466680d0957100",
+                "reference": "30ae3c90a6d6caabf4654ad1e6466680d0957100",
                 "shasum": ""
             },
             "require": {
@@ -86,9 +86,9 @@
             ],
             "support": {
                 "issues": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/issues",
-                "source": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/tree/v0.1.1"
+                "source": "https://github.com/NicolasFlamel1/Secp256k1-zkp-PHP-Library/tree/v0.1.2"
             },
-            "time": "2024-03-09T16:48:41+00:00"
+            "time": "2024-03-10T16:28:12+00:00"
         }
     ],
     "packages-dev": [],

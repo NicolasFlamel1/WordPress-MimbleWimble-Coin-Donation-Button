@@ -162,18 +162,32 @@ if(class_exists("Wallet") === FALSE) {
 				}
 			}
 			
-			// Check if getting commitment for the output failed
-			$commitment = $this->getCommitment($identifierPath, $slate["amount"]);
-			if($commitment === FALSE) {
+			// Check if getting blinding factor for the output failed
+			$blindingFactor = $this->getBlindingFactor($identifierPath, $slate["amount"]);
+			if($blindingFactor === FALSE) {
 			
 				// Return false
 				return FALSE;
 			}
 			
+			// Check if getting commitment for the output failed
+			$commitment = $this->secp256k1Zkp->getCommitment($blindingFactor, $slate["amount"]);
+			if($commitment === FALSE) {
+			
+				// Securely clear blinding factor
+				Common::securelyClear($blindingFactor);
+				
+				// Return false
+				return FALSE;
+			}
+			
 			// Check if getting Bulletproof for the output failed
-			$bulletproof = $this->getBulletproof($identifierPath, $slate["amount"]);
+			$bulletproof = $this->getBulletproof($identifierPath, $blindingFactor, $slate["amount"], $commitment);
 			if($bulletproof === FALSE) {
 			
+				// Securely clear blinding factor
+				Common::securelyClear($blindingFactor);
+				
 				// Return false
 				return FALSE;
 			}
@@ -218,17 +232,13 @@ if(class_exists("Wallet") === FALSE) {
 			// Check if an error occurred
 			if($errorOccurred === TRUE) {
 			
+				// Securely clear blinding factor
+				Common::securelyClear($blindingFactor);
+				
 				// Return false
 				return FALSE;
 			}
-			
-			// Check if getting blinding factor for the output failed
-			$blindingFactor = $this->getBlindingFactor($identifierPath, $slate["amount"]);
-			if($blindingFactor === FALSE) {
-			
-				// Return false
-				return FALSE;
-			}
+
 			
 			// Check if creating private nonce failed
 			$privateNonce = $this->secp256k1Zkp->getPrivateNonce();
@@ -386,57 +396,9 @@ if(class_exists("Wallet") === FALSE) {
 			];
 		}
 		
-		// Get commitment
-		private function getCommitment(Uint64 $identifierPath, string $value): string | FALSE {
-		
-			// Check if getting blinding factor failed
-			$blindingFactor = $this->getBlindingFactor($identifierPath, $value);
-			if($blindingFactor === FALSE) {
-			
-				// Return false
-				return FALSE;
-			}
-			
-			// Check if getting commitment failed
-			$commitment = $this->secp256k1Zkp->getCommitment($blindingFactor, $value);
-			if($commitment === FALSE) {
-			
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
-				
-				// Return false
-				return FALSE;
-			}
-			
-			// Securely clear blinding factor
-			Common::securelyClear($blindingFactor);
-			
-			// Return commitment
-			return $commitment;
-		}
-		
 		// Get Bulletproof
-		private function getBulletproof(Uint64 $identifierPath, string $value): string | FALSE {
+		private function getBulletproof(Uint64 $identifierPath, string $blindingFactor, string $value, string $commitment): string | FALSE {
 		
-			// Check if getting blinding factor failed
-			$blindingFactor = $this->getBlindingFactor($identifierPath, $value);
-			if($blindingFactor === FALSE) {
-			
-				// Return false
-				return FALSE;
-			}
-			
-			// Check if getting commitment failed
-			$commitment = $this->secp256k1Zkp->getCommitment($blindingFactor, $value);
-			if($commitment === FALSE) {
-			
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
-				
-				// Return false
-				return FALSE;
-			}
-			
 			// Get extended private key's private key
 			$privateKey = substr($this->extendedPrivateKey, 0, Crypto::SECP256K1_PRIVATE_KEY_SIZE);
 			
@@ -446,9 +408,6 @@ if(class_exists("Wallet") === FALSE) {
 			
 				// Securely clear private key
 				Common::securelyClear($privateKey);
-				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
 				
 				// Return false
 				return FALSE;
@@ -464,9 +423,6 @@ if(class_exists("Wallet") === FALSE) {
 				// Securely clear private hash
 				Common::securelyClear($privateHash);
 				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
-				
 				// Return false
 				return FALSE;
 			}
@@ -480,9 +436,6 @@ if(class_exists("Wallet") === FALSE) {
 				// Securely clear private nonce
 				Common::securelyClear($privateNonce);
 				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
-				
 				// Return false
 				return FALSE;
 			}
@@ -493,9 +446,6 @@ if(class_exists("Wallet") === FALSE) {
 			
 				// Securely clear private nonce
 				Common::securelyClear($privateNonce);
-				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
 				
 				// Return false
 				return FALSE;
@@ -510,9 +460,6 @@ if(class_exists("Wallet") === FALSE) {
 				
 				// Securely clear private nonce
 				Common::securelyClear($privateNonce);
-				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
 				
 				// Return false
 				return FALSE;
@@ -531,9 +478,6 @@ if(class_exists("Wallet") === FALSE) {
 				// Securely clear private nonce
 				Common::securelyClear($privateNonce);
 				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
-				
 				// Return false
 				return FALSE;
 			}
@@ -546,9 +490,6 @@ if(class_exists("Wallet") === FALSE) {
 			
 				// Securely clear private nonce
 				Common::securelyClear($privateNonce);
-				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
 				
 				// Return false
 				return FALSE;
@@ -565,18 +506,12 @@ if(class_exists("Wallet") === FALSE) {
 				// Securely clear private nonce
 				Common::securelyClear($privateNonce);
 				
-				// Securely clear blinding factor
-				Common::securelyClear($blindingFactor);
-				
 				// Return false
 				return FALSE;
 			}
 			
 			// Securely clear private nonce
 			Common::securelyClear($privateNonce);
-			
-			// Securely clear blinding factor
-			Common::securelyClear($blindingFactor);
 			
 			// Return Bulletproof
 			return $bulletproof;

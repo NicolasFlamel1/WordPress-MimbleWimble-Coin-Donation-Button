@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "mimblewimble-coin-donation-button/mimblewimble-coin-donation-button",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"title": "MimbleWimble Coin Donation Button",
 	"category": "mimblewimble-coin-donation-button",
 	"description": "Displays a MimbleWimble Coin donation button.",
