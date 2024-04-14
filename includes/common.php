@@ -101,7 +101,7 @@ if(class_exists("Common") === FALSE) {
 				}
 			}
 			
-			// Check if there isn't an event number of hexadecimal digits
+			// Check if there isn't an even number of hexadecimal digits
 			if(count($hexadecimalDigits) % self::HEXADECIMAL_CHARACTER_SIZE !== 0) {
 			
 				// Append zero to hexadecimal digits
